@@ -1,0 +1,17 @@
+{
+	"name": "mindtek-warehouse-cockpit",
+	"version": "1.0.0",
+	"description": "Freestyle SAPUI5 warehouse cockpit with a live floor map and a wave release workflow",
+	"private": true,
+	"scripts": {
+		"start": "ui5 serve --port 8086 --open index.html",
+		"serve": "ui5 serve --port 8086",
+		"test": "node scripts/run-tests.js",
+		"screenshots": "node scripts/screenshots.js"
+	},
+	"devDependencies": {
+		"@ui5/cli": "^3.9.0",
+		"puppeteer": "^24.43.1",
+		"ui5-middleware-livereload": "^3.4.0"
+	}
+}

@@ -1,0 +1,434 @@
+<mvc:View
+	controllerName="mindtek.warehouse.cockpit.controller.Cockpit"
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:cc="mindtek.warehouse.cockpit.control"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns="sap.m">
+	<f:DynamicPage
+		id="page"
+		toggleHeaderOnTitleClick="true"
+		fitContent="{= ${/layout} !== 'phone' }"
+		class="sapUiNoContentPadding">
+		<f:title>
+			<f:DynamicPageTitle id="pageTitle">
+				<f:heading>
+					<Title id="pageHeading" text="{i18n>appTitle}" level="H1" wrapping="true" />
+				</f:heading>
+				<f:expandedContent>
+					<Label text="{i18n>warehouseSubtitle}" wrapping="true" />
+				</f:expandedContent>
+				<f:snappedContent>
+					<ObjectStatus text="{/clock/time}" icon="sap-icon://history" state="{= ${/playback} === 'live' ? 'Information' : 'None' }" />
+					<Label text="{i18n>warehouseSubtitle}" wrapping="true" />
+				</f:snappedContent>
+				<f:content>
+					<OverflowToolbar id="clockToolbar" style="Clear">
+						<ObjectStatus
+							id="clock"
+							title="{i18n>simulationTime}"
+							text="{/clock/time}"
+							icon="sap-icon://history"
+							state="{= ${/playback} === 'live' ? 'Information' : 'None' }"
+							tooltip="{/clock/date}" />
+						<ObjectStatus
+							id="liveStatus"
+							text="{= ${/playback} === 'live' ? ${i18n>statusLive} : ${i18n>statusPaused} }"
+							state="{= ${/playback} === 'live' ? 'Success' : 'Warning' }"
+							inverted="true" />
+					</OverflowToolbar>
+				</f:content>
+				<f:actions>
+					<Select
+						id="warehouseSelect"
+						selectedKey="HM01"
+						width="18rem"
+						tooltip="{i18n>warehouse}"
+						ariaLabelledBy="warehouseLabel">
+						<core:Item key="HM01" text="{i18n>warehouseHM01}" />
+						<core:Item key="HM02" text="{i18n>warehouseHM02}" enabled="false" />
+						<core:Item key="HM03" text="{i18n>warehouseHM03}" enabled="false" />
+						<layoutData>
+							<OverflowToolbarLayoutData priority="Low" />
+						</layoutData>
+					</Select>
+					<SegmentedButton
+						id="playbackSwitch"
+						selectedKey="{/playback}"
+						selectionChange=".onPlaybackChange"
+						ariaLabelledBy="playbackLabel">
+						<items>
+							<SegmentedButtonItem key="live" icon="sap-icon://media-play" text="{i18n>live}" />
+							<SegmentedButtonItem key="paused" icon="sap-icon://media-pause" text="{i18n>paused}" />
+						</items>
+					</SegmentedButton>
+					<SegmentedButton
+						id="speedSwitch"
+						selectedKey="{/speed}"
+						ariaLabelledBy="speedLabel">
+						<items>
+							<SegmentedButtonItem key="1" text="{i18n>speed1}" tooltip="{i18n>speed1Tooltip}" />
+							<SegmentedButtonItem key="5" text="{i18n>speed5}" tooltip="{i18n>speed5Tooltip}" />
+							<SegmentedButtonItem key="10" text="{i18n>speed10}" tooltip="{i18n>speed10Tooltip}" />
+						</items>
+					</SegmentedButton>
+					<Button
+						id="createWaveButton"
+						text="{i18n>createWave}"
+						type="Emphasized"
+						press=".onCreateWave">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</Button>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader id="pageHeader" pinnable="true">
+				<VBox>
+					<core:InvisibleText id="warehouseLabel" text="{i18n>warehouse}" />
+					<core:InvisibleText id="playbackLabel" text="{i18n>playback}" />
+					<core:InvisibleText id="speedLabel" text="{i18n>speed}" />
+					<MessageStrip
+						id="demoNotice"
+						text="{i18n>demoNotice}"
+						type="Information"
+						showIcon="true"
+						class="sapUiSmallMarginBottom" />
+					<HBox id="kpis" wrap="Wrap" renderType="Bare">
+						<GenericTile
+							id="kpiOpenPicks"
+							app:kpi="openPicks"
+							header="{i18n>kpiOpenPicks}"
+							sizeBehavior="{= ${/layout} === 'phone' ? 'Small' : 'Responsive' }"
+							press=".onKpiPress"
+							class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+							<TileContent footer="{/kpis/openPicks/footer}">
+								<NumericContent
+									value="{/kpis/openPicks/value}"
+									valueColor="{/kpis/openPicks/color}"
+									icon="sap-icon://activity-items"
+									withMargin="false"
+									animateTextChange="false" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile
+							id="kpiPicksPerHour"
+							app:kpi="picksPerHour"
+							header="{i18n>kpiPicksPerHour}"
+							sizeBehavior="{= ${/layout} === 'phone' ? 'Small' : 'Responsive' }"
+							press=".onKpiPress"
+							class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+							<TileContent footer="{/kpis/picksPerHour/footer}">
+								<NumericContent
+									value="{/kpis/picksPerHour/value}"
+									valueColor="{/kpis/picksPerHour/color}"
+									icon="sap-icon://performance"
+									withMargin="false"
+									animateTextChange="false" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile
+							id="kpiDockOccupancy"
+							app:kpi="dockOccupancy"
+							header="{i18n>kpiDockOccupancy}"
+							sizeBehavior="{= ${/layout} === 'phone' ? 'Small' : 'Responsive' }"
+							press=".onKpiPress"
+							class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+							<TileContent footer="{/kpis/dockOccupancy/footer}">
+								<NumericContent
+									value="{/kpis/dockOccupancy/value}"
+									valueColor="{/kpis/dockOccupancy/color}"
+									scale="%"
+									icon="sap-icon://shipping-status"
+									withMargin="false"
+									animateTextChange="false" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile
+							id="kpiLateDeliveries"
+							app:kpi="lateDeliveries"
+							header="{i18n>kpiLateDeliveries}"
+							sizeBehavior="{= ${/layout} === 'phone' ? 'Small' : 'Responsive' }"
+							press=".onKpiPress"
+							class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+							<TileContent footer="{/kpis/lateDeliveries/footer}">
+								<NumericContent
+									value="{/kpis/lateDeliveries/value}"
+									valueColor="{/kpis/lateDeliveries/color}"
+									icon="sap-icon://lateness"
+									withMargin="false"
+									animateTextChange="false" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile
+							id="kpiBinUtilisation"
+							app:kpi="binUtilisation"
+							header="{i18n>kpiBinUtilisation}"
+							sizeBehavior="{= ${/layout} === 'phone' ? 'Small' : 'Responsive' }"
+							press=".onKpiPress"
+							class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+							<TileContent footer="{/kpis/binUtilisation/footer}">
+								<NumericContent
+									value="{/kpis/binUtilisation/value}"
+									valueColor="{/kpis/binUtilisation/color}"
+									scale="%"
+									icon="sap-icon://product"
+									withMargin="false"
+									animateTextChange="false" />
+							</TileContent>
+						</GenericTile>
+					</HBox>
+				</VBox>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<FlexBox
+				id="body"
+				renderType="Bare"
+				height="{= ${/layout} === 'phone' ? 'auto' : '100%' }"
+				direction="{= ${/layout} === 'phone' ? 'Column' : 'Row' }"
+				alignItems="Stretch"
+				class="wcBody">
+				<VBox
+					id="mapArea"
+					renderType="Bare"
+					height="{= ${/layout} === 'phone' ? 'auto' : '100%' }"
+					class="wcMapArea">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="1" baseSize="{= ${/layout} === 'phone' ? 'auto' : '0' }" minWidth="0" minHeight="0" />
+					</layoutData>
+					<OverflowToolbar id="mapToolbar" ariaLabelledBy="mapTitle">
+						<Title id="mapTitle" text="{i18n>floorMapTitle}" level="H2" />
+						<ToolbarSpacer />
+						<SegmentedButton
+							id="viewSwitch"
+							selectedKey="{/view}"
+							selectionChange=".onViewChange"
+							ariaLabelledBy="viewLabel">
+							<items>
+								<SegmentedButtonItem key="map" icon="sap-icon://map-2" tooltip="{i18n>viewMap}" />
+								<SegmentedButtonItem id="openAsList" key="list" icon="sap-icon://list" tooltip="{i18n>viewList}" />
+							</items>
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" />
+							</layoutData>
+						</SegmentedButton>
+						<core:InvisibleText id="viewLabel" text="{i18n>viewLabel}" />
+						<ToolbarSeparator />
+						<ToggleButton
+							id="layerBins"
+							text="{i18n>layerBins}"
+							pressed="{/layers/bins}"
+							enabled="{= ${/view} === 'map' }"
+							type="Transparent" />
+						<ToggleButton
+							id="layerWorkers"
+							text="{i18n>layerWorkers}"
+							pressed="{/layers/workers}"
+							enabled="{= ${/view} === 'map' }"
+							type="Transparent" />
+						<ToggleButton
+							id="layerDocks"
+							text="{i18n>layerDocks}"
+							pressed="{/layers/docks}"
+							enabled="{= ${/view} === 'map' }"
+							type="Transparent" />
+						<ToggleButton
+							id="layerPaths"
+							text="{i18n>layerPaths}"
+							pressed="{/layers/paths}"
+							enabled="{= ${/view} === 'map' &amp;&amp; ${/layout} !== 'phone' }"
+							type="Transparent" />
+						<ToggleButton
+							id="layerHeat"
+							text="{i18n>layerHeatMap}"
+							pressed="{/layers/heatMap}"
+							enabled="{= ${/view} === 'map' }"
+							type="Transparent" />
+						<ToolbarSeparator />
+						<OverflowToolbarButton
+							id="zoomOut"
+							icon="sap-icon://zoom-out"
+							text="{i18n>zoomOut}"
+							tooltip="{i18n>zoomOut}"
+							enabled="{= ${/view} === 'map' &amp;&amp; ${/zoom} > 1 }"
+							press=".onZoomOut"
+							type="Transparent" />
+						<OverflowToolbarButton
+							id="zoomIn"
+							icon="sap-icon://zoom-in"
+							text="{i18n>zoomIn}"
+							tooltip="{i18n>zoomIn}"
+							enabled="{= ${/view} === 'map' &amp;&amp; ${/zoom} &lt; 6 }"
+							press=".onZoomIn"
+							type="Transparent" />
+						<OverflowToolbarButton
+							id="zoomFit"
+							icon="sap-icon://popup-window"
+							text="{i18n>fitToScreen}"
+							tooltip="{i18n>fitToScreen}"
+							enabled="{= ${/view} === 'map' &amp;&amp; ${/zoom} > 1 }"
+							press=".onFitToScreen"
+							type="Transparent" />
+						<OverflowToolbarToggleButton
+							id="panelToggle"
+							icon="sap-icon://screen-split-two"
+							text="{i18n>sidePanel}"
+							tooltip="{i18n>sidePanelTooltip}"
+							pressed="{/panel/visible}"
+							visible="{= ${/layout} !== 'phone' }"
+							press=".onTogglePanel"
+							type="Transparent" />
+					</OverflowToolbar>
+					<cc:FloorMap
+						id="floorMap"
+						visible="{= ${/view} === 'map' }"
+						height="{= ${/layout} === 'phone' ? '17rem' : 'auto' }"
+						showBins="{/layers/bins}"
+						showWorkers="{/layers/workers}"
+						showDocks="{/layers/docks}"
+						showPaths="{= ${/layers/paths} &amp;&amp; ${/layout} !== 'phone' }"
+						heatMap="{/layers/heatMap}"
+						zoom="{/zoom}"
+						selectedKey="{/selectedKey}"
+						reducedMotion="{/reducedMotion}"
+						simplified="{= ${/layout} === 'phone' }"
+						zoomChange=".onZoomChange"
+						keyboardHint="{i18n>mapKeyboardHint}"
+						roleDescription="{i18n>mapRoleDescription}"
+						ariaLabelledBy="mapTitle"
+						select=".onMapSelect">
+						<cc:layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="1" baseSize="{= ${/layout} === 'phone' ? 'auto' : '0%' }" minHeight="0" />
+						</cc:layoutData>
+						<cc:legendItems>
+							<core:Item key="empty" text="{i18n>legendEmpty}" />
+							<core:Item key="low" text="{i18n>legendLow}" />
+							<core:Item key="ok" text="{i18n>legendOk}" />
+							<core:Item key="full" text="{i18n>legendFull}" />
+							<core:Item key="exception" text="{i18n>legendException}" />
+							<core:Item key="heatLow" text="{i18n>legendHeatLow}" />
+							<core:Item key="heatHigh" text="{i18n>legendHeatHigh}" />
+							<core:Item key="free" text="{i18n>legendDockFree}" />
+							<core:Item key="occupied" text="{i18n>legendDockOccupied}" />
+							<core:Item key="loading" text="{i18n>legendDockLoading}" />
+							<core:Item key="walking" text="{i18n>legendWalking}" />
+							<core:Item key="picking" text="{i18n>legendPicking}" />
+							<core:Item key="idle" text="{i18n>legendIdle}" />
+						</cc:legendItems>
+					</cc:FloorMap>
+					<ScrollContainer
+						id="objectsContainer"
+						visible="{= ${/view} === 'list' }"
+						height="{= ${/layout} === 'phone' ? 'auto' : '100%' }"
+						vertical="true"
+						focusable="false">
+						<layoutData>
+							<FlexItemData growFactor="1" shrinkFactor="1" minHeight="0" />
+						</layoutData>
+						<Table
+							id="objectsTable"
+							items="{path: '/objects', templateShareable: false}"
+							growing="true"
+							growingThreshold="40"
+							growingScrollToLoad="true"
+							sticky="ColumnHeaders,HeaderToolbar"
+							contextualWidth="Auto"
+							popinLayout="GridSmall"
+							ariaLabelledBy="objectsTitle"
+							noDataText="{i18n>objectsNoData}">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title id="objectsTitle" text="{i18n>objectsTitle}" level="H3" />
+									<ToolbarSpacer />
+									<SegmentedButton
+										id="objectFilter"
+										selectedKey="{/objectFilter}"
+										selectionChange=".onObjectFilterChange">
+										<items>
+											<SegmentedButtonItem key="all" text="{i18n>filterAll}" />
+											<SegmentedButtonItem key="bin" text="{i18n>layerBins}" />
+											<SegmentedButtonItem key="dock" text="{i18n>layerDocks}" />
+											<SegmentedButtonItem key="worker" text="{i18n>layerWorkers}" />
+										</items>
+									</SegmentedButton>
+									<SearchField
+										id="objectSearch"
+										width="14rem"
+										placeholder="{i18n>searchObjects}"
+										liveChange=".onObjectSearch"
+										search=".onObjectSearch">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" minWidth="9rem" />
+										</layoutData>
+									</SearchField>
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="16rem">
+									<Text text="{i18n>colObject}" />
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>colType}" />
+								</Column>
+								<Column minScreenWidth="Tablet" demandPopin="true">
+									<Text text="{i18n>colLocation}" />
+								</Column>
+								<Column minScreenWidth="Desktop" demandPopin="true">
+									<Text text="{i18n>colDetails}" />
+								</Column>
+								<Column hAlign="End">
+									<Text text="{i18n>status}" />
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem type="Navigation" press=".onObjectPress" highlight="{highlight}">
+									<cells>
+										<ObjectIdentifier title="{title}" text="{subtitle}" />
+										<Text text="{typeText}" />
+										<Text text="{location}" />
+										<Text text="{details}" />
+										<ObjectStatus text="{statusText}" state="{statusState}" />
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</ScrollContainer>
+					<VBox id="phoneWaves" visible="{= ${/layout} === 'phone' }">
+						<OverflowToolbar style="Clear">
+							<Title id="phoneWavesTitle" text="{i18n>wavesTitle}" level="H2" />
+							<ToolbarSpacer />
+							<Button
+								id="phoneCreateWave"
+								icon="sap-icon://add"
+								tooltip="{i18n>createWave}"
+								press=".onCreateWave"
+								type="Transparent" />
+						</OverflowToolbar>
+						<core:Fragment id="phoneList" fragmentName="mindtek.warehouse.cockpit.view.fragment.WaveList" type="XML" />
+					</VBox>
+				</VBox>
+				<NavContainer
+					id="panel"
+					visible="{/panel/visible}"
+					autoFocus="false"
+					class="wcPanel">
+					<layoutData>
+						<FlexItemData growFactor="0" shrinkFactor="0" baseSize="25rem" />
+					</layoutData>
+					<pages>
+						<core:Fragment fragmentName="mindtek.warehouse.cockpit.view.fragment.Waves" type="XML" />
+						<core:Fragment fragmentName="mindtek.warehouse.cockpit.view.fragment.WaveDetail" type="XML" />
+						<core:Fragment fragmentName="mindtek.warehouse.cockpit.view.fragment.BinDetail" type="XML" />
+						<core:Fragment fragmentName="mindtek.warehouse.cockpit.view.fragment.DockDetail" type="XML" />
+						<core:Fragment fragmentName="mindtek.warehouse.cockpit.view.fragment.WorkerDetail" type="XML" />
+					</pages>
+				</NavContainer>
+			</FlexBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

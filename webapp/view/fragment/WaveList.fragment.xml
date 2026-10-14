@@ -1,0 +1,33 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<List
+		id="waveList"
+		items="{path: '/waves', templateShareable: false}"
+		noDataText="{i18n>wavesNoData}">
+		<CustomListItem
+			type="Navigation"
+			press=".onWavePress"
+			highlight="{highlight}">
+			<VBox class="sapUiSmallMarginTopBottom sapUiSmallMarginBeginEnd">
+				<HBox justifyContent="SpaceBetween" alignItems="Center">
+					<Title text="{id}" level="H3" />
+					<ObjectStatus text="{statusText}" state="{statusState}" icon="{statusIcon}" />
+				</HBox>
+				<Text text="{subtitle}" class="sapUiTinyMarginTop" />
+				<ProgressIndicator
+					percentValue="{progress}"
+					displayValue="{progressText}"
+					state="{progressState}"
+					displayOnly="true"
+					class="sapUiTinyMarginTop" />
+				<HBox justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+					<Label text="{timeText}" />
+					<ObjectStatus
+						visible="{= ${exceptionCount} > 0 }"
+						text="{exceptionText}"
+						state="Warning"
+						icon="sap-icon://alert" />
+				</HBox>
+			</VBox>
+		</CustomListItem>
+	</List>
+</core:FragmentDefinition>

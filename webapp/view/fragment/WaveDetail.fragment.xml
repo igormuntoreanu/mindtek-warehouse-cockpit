@@ -1,0 +1,196 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Page
+		id="wavePage"
+		title="{/wave/title}"
+		titleLevel="H2"
+		showNavButton="true"
+		navButtonPress=".onPanelBack"
+		navButtonTooltip="{i18n>back}"
+		showFooter="{= !!${/wave/canRelease} }">
+		<headerContent>
+			<Button
+				icon="sap-icon://decline"
+				tooltip="{i18n>closePanel}"
+				press=".onClosePanel"
+				type="Transparent" />
+		</headerContent>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<HBox justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap">
+					<ObjectStatus
+						id="waveStatus"
+						text="{/wave/statusText}"
+						state="{/wave/statusState}"
+						icon="{/wave/statusIcon}"
+						inverted="true" />
+					<Label text="{/wave/strategyText}" />
+				</HBox>
+				<ProgressIndicator
+					id="waveProgress"
+					percentValue="{/wave/progress}"
+					displayValue="{/wave/progressText}"
+					state="{/wave/progressState}"
+					displayOnly="true"
+					class="sapUiSmallMarginTop" />
+				<MessageStrip
+					id="waveExceptionStrip"
+					visible="{= ${/wave/openExceptionCount} > 0 }"
+					text="{/wave/exceptionStripText}"
+					type="Warning"
+					showIcon="true"
+					class="sapUiSmallMarginTop" />
+			</VBox>
+			<form:SimpleForm
+				editable="false"
+				layout="ColumnLayout"
+				columnsM="1"
+				columnsL="1"
+				columnsXL="1">
+				<form:toolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>generalInformation}" level="H3" />
+					</Toolbar>
+				</form:toolbar>
+				<Label text="{i18n>deliveries}" />
+				<Text text="{/wave/deliveryCount}" />
+				<Label text="{i18n>pickTasks}" />
+				<Text text="{/wave/taskCount}" />
+				<Label text="{i18n>pickers}" />
+				<Text text="{/wave/workersText}" />
+				<Label text="{i18n>packingStation}" />
+				<Text text="{/wave/stationText}" />
+				<Label text="{i18n>estimatedDuration}" />
+				<Text text="{/wave/estimateText}" />
+				<Label text="{i18n>createdAt}" />
+				<Text text="{/wave/createdAt}" />
+				<Label text="{i18n>releasedAt}" />
+				<Text text="{/wave/releasedAt}" />
+				<Label text="{i18n>startedAt}" />
+				<Text text="{/wave/startedAt}" />
+				<Label text="{i18n>completedAt}" />
+				<Text text="{/wave/completedAt}" />
+			</form:SimpleForm>
+			<List
+				id="waveExceptions"
+				visible="{= !!${/wave/exceptions} &amp;&amp; ${/wave/exceptions}.length > 0 }"
+				items="{path: '/wave/exceptions', templateShareable: false}">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>exceptions}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<CustomListItem highlight="{= ${open} ? 'Error' : 'None' }">
+					<VBox class="sapUiSmallMarginTopBottom sapUiSmallMarginBeginEnd">
+						<HBox justifyContent="SpaceBetween" alignItems="Center">
+							<Title text="{title}" level="H4" wrapping="true" />
+							<Label text="{time}" />
+						</HBox>
+						<Text text="{description}" class="sapUiTinyMarginTop" />
+						<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+							<ObjectStatus text="{statusText}" state="{statusState}" />
+							<Button
+								text="{i18n>resolveEllipsis}"
+								visible="{open}"
+								press=".onResolveFromWave" />
+						</HBox>
+					</VBox>
+				</CustomListItem>
+			</List>
+			<Table
+				id="waveDeliveries"
+				items="{path: '/wave/deliveries', templateShareable: false}"
+				contextualWidth="Auto"
+				popinLayout="GridSmall">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>deliveries}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>delivery}" />
+					</Column>
+					<Column hAlign="End" width="5rem">
+						<Text text="{i18n>due}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>status}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{id}" text="{customer}" />
+							<ObjectStatus text="{due}" state="{dueState}" />
+							<ObjectStatus text="{statusText}" state="{statusState}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Table
+				id="waveTasks"
+				items="{path: '/wave/tasks', templateShareable: false}"
+				contextualWidth="Auto"
+				popinLayout="GridSmall"
+				growing="true"
+				growingThreshold="10">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>pickTasks}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>binAndProduct}" />
+					</Column>
+					<Column hAlign="End" width="4rem">
+						<Text text="{i18n>quantity}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>status}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{binId}" text="{product}" />
+							<Text text="{qtyText}" />
+							<VBox alignItems="End">
+								<ObjectStatus text="{statusText}" state="{statusState}" />
+								<Label text="{worker}" />
+							</VBox>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<List
+				id="waveLog"
+				items="{path: '/wave/log', templateShareable: false}">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>activityLog}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<StandardListItem
+					title="{text}"
+					info="{time}"
+					icon="{icon}"
+					highlight="{= ${state} === 'Information' ? 'None' : ${state} }"
+					wrapping="true" />
+			</List>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<ToolbarSpacer />
+				<Button
+					id="releaseWave"
+					text="{i18n>releaseWave}"
+					type="Emphasized"
+					press=".onReleaseWave" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</core:FragmentDefinition>

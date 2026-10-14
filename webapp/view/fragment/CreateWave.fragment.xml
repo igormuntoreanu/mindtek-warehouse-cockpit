@@ -1,0 +1,134 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog
+		id="createWaveDialog"
+		title="{i18n>createWaveTitle}"
+		contentWidth="62rem"
+		contentHeight="44rem"
+		resizable="true"
+		draggable="true"
+		stretch="{device>/system/phone}"
+		horizontalScrolling="false"
+		afterClose=".onAfterClose"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer">
+		<content>
+			<ScrollContainer height="18rem" vertical="true" horizontal="false" focusable="false">
+			<Table
+				id="createWaveTable"
+				mode="MultiSelect"
+				items="{path: '/create/deliveries', templateShareable: false}"
+				selectionChange=".onSelectionChange"
+				sticky="ColumnHeaders,HeaderToolbar"
+				contextualWidth="Auto"
+				popinLayout="GridSmall"
+				ariaLabelledBy="createWaveTableTitle"
+				noDataText="{i18n>noOpenDeliveries}">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title
+							id="createWaveTableTitle"
+							text="{i18n>openDeliveries} ({/create/selectedCount}/{/create/deliveryCount})"
+							level="H3" />
+						<ToolbarSpacer />
+						<Label id="createWaveStrategyLabel" text="{i18n>strategy}" labelFor="createWaveStrategy" />
+						<Select
+							id="createWaveStrategy"
+							selectedKey="{/create/strategy}"
+							change=".onStrategyChange"
+							ariaLabelledBy="createWaveStrategyLabel">
+							<core:Item key="DUE" text="{i18n>strategyDue}" />
+							<core:Item key="ZONE" text="{i18n>strategyZone}" />
+							<core:Item key="CUSTOMER" text="{i18n>strategyCustomer}" />
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" />
+							</layoutData>
+						</Select>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="12rem">
+						<Text text="{i18n>delivery}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>due}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>priority}" />
+					</Column>
+					<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>items}" />
+					</Column>
+					<Column hAlign="End" minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>units}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>zones}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem selected="{selected}" highlight="{= ${late} ? 'Error' : 'None' }">
+						<cells>
+							<ObjectIdentifier title="{id}" text="{customer}" />
+							<ObjectStatus title="{due}" text="{dueText}" state="{dueState}" />
+							<ObjectStatus text="{priorityText}" state="{priorityState}" />
+							<Text text="{itemCount}" />
+							<Text text="{unitCount}" />
+							<Text text="{zonesText}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			</ScrollContainer>
+			<VBox class="sapUiSmallMarginTop">
+				<Toolbar style="Clear">
+					<Title id="createWavePreviewTitle" text="{i18n>preview}" level="H3" />
+					<ToolbarSpacer />
+					<Label text="{/create/preview/idleText}" />
+				</Toolbar>
+				<HBox wrap="Wrap" class="sapUiSmallMarginBeginEnd">
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>pickTasks}" />
+						<ObjectNumber id="previewTasks" number="{/create/preview/taskCount}" emphasized="true" class="sapMObjectNumberLarge" />
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>units}" />
+						<ObjectNumber number="{/create/preview/unitCount}" emphasized="true" class="sapMObjectNumberLarge" />
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>estimatedDuration}" />
+						<ObjectNumber id="previewDuration" number="{/create/preview/durationValue}" unit="{i18n>unitMinutes}" emphasized="true" class="sapMObjectNumberLarge" />
+					</VBox>
+					<VBox class="sapUiMediumMarginEnd sapUiSmallMarginBottom">
+						<Label text="{i18n>pickersNeeded}" />
+						<ObjectNumber id="previewWorkers" number="{/create/preview/workersNeeded}" emphasized="true" class="sapMObjectNumberLarge" />
+					</VBox>
+				</HBox>
+				<Toolbar style="Clear">
+					<Title id="createWaveChecksTitle" text="{i18n>checks}" level="H3" />
+				</Toolbar>
+				<VBox class="wcChecks" renderType="Bare">
+					<MessageView
+						id="createWaveMessages"
+						items="{path: '/create/preview/messages', templateShareable: false}"
+						groupItems="false">
+						<MessageItem
+							type="{type}"
+							title="{title}"
+							subtitle="{subtitle}" />
+					</MessageView>
+				</VBox>
+			</VBox>
+		</content>
+		<buttons>
+			<Button
+				id="createWaveConfirm"
+				text="{i18n>create}"
+				type="Emphasized"
+				enabled="{= !!${/create/canCreate} }"
+				press=".onCreate" />
+			<Button
+				id="createWaveCancel"
+				text="{i18n>cancel}"
+				press=".onCancel" />
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,41 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Page
+		id="wavesPage"
+		title="{i18n>wavesTitle}"
+		titleLevel="H2"
+		backgroundDesign="List">
+		<headerContent>
+			<Button
+				id="panelCreateWave"
+				icon="sap-icon://add"
+				tooltip="{i18n>createWave}"
+				press=".onCreateWave"
+				type="Transparent" />
+			<Button
+				icon="sap-icon://decline"
+				tooltip="{i18n>closePanel}"
+				press=".onClosePanel"
+				type="Transparent" />
+		</headerContent>
+		<subHeader>
+			<Toolbar>
+				<SegmentedButton
+					id="waveFilter"
+					selectedKey="{/panel/waveFilter}"
+					selectionChange=".onWaveFilterChange"
+					width="100%">
+					<items>
+						<SegmentedButtonItem key="all" text="{i18n>filterAll} ({/waveCounts/all})" />
+						<SegmentedButtonItem key="active" text="{i18n>filterActive} ({/waveCounts/active})" />
+						<SegmentedButtonItem key="planned" text="{i18n>filterPlanned} ({/waveCounts/planned})" />
+						<SegmentedButtonItem key="completed" text="{i18n>filterCompleted} ({/waveCounts/completed})" />
+					</items>
+				</SegmentedButton>
+			</Toolbar>
+		</subHeader>
+		<content>
+			<core:InvisibleText id="wavesHeading" text="{i18n>wavesTitle}" />
+			<core:Fragment id="panelList" fragmentName="mindtek.warehouse.cockpit.view.fragment.WaveList" type="XML" />
+		</content>
+	</Page>
+</core:FragmentDefinition>

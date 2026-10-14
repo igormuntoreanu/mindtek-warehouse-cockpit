@@ -1,0 +1,72 @@
+diff --git a/.github/workflows/pages.yml b/.github/workflows/pages.yml
+index 6a13790..7edaa9b 100644
+--- a/.github/workflows/pages.yml
++++ b/.github/workflows/pages.yml
+@@ -1,4 +1,4 @@
+-﻿# Showcase apps copied from the journal, sales, purchase order and supplier repositories.
++﻿# Showcase apps copied from the journal, sales, purchase order, supplier and warehouse repositories.
+ name: Deploy to GitHub Pages
+ on:
+   push:
+@@ -36,6 +36,10 @@ jobs:
+         with:
+           repository: igormuntoreanu/mindtek-supplier-registration
+           path: vendor/supplier-registration
++      - uses: actions/checkout@v4
++        with:
++          repository: igormuntoreanu/mindtek-warehouse-cockpit
++          path: vendor/warehouse-cockpit
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -43,12 +47,13 @@ jobs:
+       - run: npm run build
+       - name: Add showcase apps and custom domain
+         run: |
+-          mkdir -p dist/journalentry-monitor dist/journalentry-monitor-alp dist/sales-overview dist/purchaseorder-worklist dist/supplier-registration
++          mkdir -p dist/journalentry-monitor dist/journalentry-monitor-alp dist/sales-overview dist/purchaseorder-worklist dist/supplier-registration dist/warehouse-cockpit
+           cp -a vendor/journalentry-monitor/webapp/. dist/journalentry-monitor/
+           cp -a vendor/journalentry-monitor-alp/webapp/. dist/journalentry-monitor-alp/
+           cp -a vendor/sales-overview/webapp/. dist/sales-overview/
+           cp -a vendor/purchaseorder-worklist/webapp/. dist/purchaseorder-worklist/
+           cp -a vendor/supplier-registration/webapp/. dist/supplier-registration/
++          cp -a vendor/warehouse-cockpit/webapp/. dist/warehouse-cockpit/
+           touch dist/sales-overview/.nojekyll
+           echo "mindtek-ltd.com" > dist/CNAME
+           touch dist/.nojekyll
+diff --git a/webapp/controller/Portfolio.controller.js b/webapp/controller/Portfolio.controller.js
+index 42f2ad2..2903e8a 100644
+--- a/webapp/controller/Portfolio.controller.js
++++ b/webapp/controller/Portfolio.controller.js
+@@ -82,7 +82,10 @@ sap.ui.define([
+ 					floorplanKey: "portfolioFreestyleFloorplan",
+ 					descriptionKey: "portfolioFreestyleDescription",
+ 					icon: "sap-icon://grid",
+-					url: ""
++					url: this._showcaseUrl(
++						"http://localhost:8086/index.html",
++						"https://mindtek-ltd.com/warehouse-cockpit/"
++					)
+ 				},
+ 				{
+ 					key: "feop",
+diff --git a/webapp/i18n/i18n.properties b/webapp/i18n/i18n.properties
+index 095fc8a..faaee5f 100644
+--- a/webapp/i18n/i18n.properties
++++ b/webapp/i18n/i18n.properties
+@@ -188,7 +188,7 @@ portfolioWorklistFloorplan=Worklist
+ portfolioWorklistDescription=A Fiori elements Worklist for approving purchase orders: pending items by urgency, a detailed Object Page, and approve or reject with a reason and audit trail.
+ portfolioFreestyleTitle=Warehouse Cockpit
+ portfolioFreestyleFloorplan=Freestyle / Custom
+-portfolioFreestyleDescription=A custom freestyle SAPUI5 application tailored to warehouse operations.
++portfolioFreestyleDescription=A freestyle SAPUI5 cockpit with a live warehouse floor map: plan and release pick waves and watch them run.
+ portfolioFeopTitle=Supplier Registration
+ portfolioFeopFloorplan=Form Entry Object Page
+ portfolioFeopDescription=A Form Entry Object Page for structured supplier onboarding.
+diff --git a/webapp/i18n/i18n_en.properties b/webapp/i18n/i18n_en.properties
+index b8fd048..e6d66d4 100644
+--- a/webapp/i18n/i18n_en.properties
++++ b/webapp/i18n/i18n_en.properties
+@@ -1 +1,2 @@
+ # English locale. All keys are inherited from i18n.properties.
++portfolioFreestyleDescription=A freestyle SAPUI5 cockpit with a live warehouse floor map: plan and release pick waves and watch them run.
