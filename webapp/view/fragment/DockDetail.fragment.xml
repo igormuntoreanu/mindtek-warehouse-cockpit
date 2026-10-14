@@ -1,0 +1,131 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form">
+	<Page
+		id="dockPage"
+		title="{/dock/title}"
+		titleLevel="H2"
+		showNavButton="true"
+		navButtonPress=".onPanelBack"
+		navButtonTooltip="{i18n>back}">
+		<headerContent>
+			<Button
+				icon="sap-icon://decline"
+				tooltip="{i18n>closePanel}"
+				press=".onClosePanel"
+				type="Transparent" />
+		</headerContent>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<HBox justifyContent="SpaceBetween" alignItems="Center">
+					<Label text="{/dock/directionText}" />
+					<ObjectStatus id="dockStatus" text="{/dock/stateText}" state="{/dock/stateState}" inverted="true" />
+				</HBox>
+				<Label
+					text="{= ${/dock/inbound} ? ${i18n>palletsRemaining} : ${i18n>load} }"
+					labelFor="dockFill"
+					visible="{= !!${/dock/hasTruck} }"
+					class="sapUiSmallMarginTop" />
+				<ProgressIndicator
+					id="dockFill"
+					visible="{= !!${/dock/hasTruck} }"
+					percentValue="{/dock/fill}"
+					displayValue="{/dock/fillText}"
+					state="Information"
+					displayOnly="true" />
+				<MessageStrip
+					visible="{= !${/dock/hasTruck} }"
+					text="{/dock/freeText}"
+					type="Information"
+					showIcon="true"
+					class="sapUiSmallMarginTop" />
+			</VBox>
+			<form:SimpleForm
+				editable="false"
+				layout="ColumnLayout"
+				columnsM="1"
+				columnsL="1"
+				columnsXL="1">
+				<form:toolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>truck}" level="H3" />
+					</Toolbar>
+				</form:toolbar>
+				<Label text="{i18n>licencePlate}" visible="{= !!${/dock/hasTruck} }" />
+				<Text text="{/dock/plate}" visible="{= !!${/dock/hasTruck} }" />
+				<Label text="{i18n>carrier}" />
+				<Text text="{/dock/carrier}" />
+				<Label text="{/dock/etaLabel}" />
+				<Text text="{/dock/eta}" />
+				<Label text="{i18n>etd}" visible="{= !${/dock/inbound} }" />
+				<Text text="{/dock/etd}" visible="{= !${/dock/inbound} }" />
+			</form:SimpleForm>
+			<Table
+				id="dockDeliveries"
+				visible="{= !${/dock/inbound} }"
+				items="{path: '/dock/deliveries', templateShareable: false}"
+				contextualWidth="Auto"
+				popinLayout="GridSmall"
+				noDataText="{i18n>dockNoDeliveries}">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>deliveries}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>delivery}" />
+					</Column>
+					<Column hAlign="End" width="4.5rem">
+						<Text text="{i18n>units}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>status}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier title="{id}" text="{customer}" />
+							<Text text="{units}" />
+							<ObjectStatus text="{statusText}" state="{statusState}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<Table
+				id="dockPallets"
+				visible="{= !!${/dock/inbound} &amp;&amp; !!${/dock/hasTruck} }"
+				items="{path: '/dock/pallets', templateShareable: false}"
+				contextualWidth="Auto"
+				popinLayout="GridSmall">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>pallets}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>product}" />
+					</Column>
+					<Column hAlign="End" width="4.5rem">
+						<Text text="{i18n>quantity}" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="{i18n>status}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{product}" />
+							<Text text="{qtyText}" />
+							<ObjectStatus text="{statusText}" state="{statusState}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</core:FragmentDefinition>

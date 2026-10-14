@@ -1,0 +1,8 @@
+<mvc:View
+	controllerName="mindtek.warehouse.cockpit.controller.App"
+	displayBlock="true"
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<App id="app" />
+</mvc:View>

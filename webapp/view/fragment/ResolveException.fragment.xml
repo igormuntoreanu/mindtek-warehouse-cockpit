@@ -1,0 +1,59 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog
+		id="resolveDialog"
+		title="{/resolve/title}"
+		state="Warning"
+		contentWidth="30rem"
+		afterClose=".onAfterClose"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<Text text="{/resolve/description}" />
+				<Text text="{/resolve/deliveryText}" class="sapUiSmallMarginTop" />
+				<Label
+					id="resolveOptionsLabel"
+					text="{i18n>resolveHow}"
+					class="sapUiMediumMarginTop" />
+				<RadioButtonGroup
+					id="resolveOptions"
+					selectedIndex="{/resolve/option}"
+					ariaLabelledBy="resolveOptionsLabel">
+					<RadioButton id="resolveAlternativeOption" text="{i18n>resolveAlternative}" enabled="{/resolve/hasAlternatives}" />
+					<RadioButton id="resolveSkipOption" text="{i18n>resolveSkip}" />
+				</RadioButtonGroup>
+				<Label
+					text="{i18n>alternativeBin}"
+					labelFor="resolveBin"
+					visible="{/resolve/hasAlternatives}"
+					class="sapUiSmallMarginTop" />
+				<Select
+					id="resolveBin"
+					width="100%"
+					visible="{/resolve/hasAlternatives}"
+					enabled="{= ${/resolve/option} === 0 }"
+					selectedKey="{/resolve/binId}"
+					items="{path: '/resolve/alternatives', templateShareable: false}">
+					<core:Item key="{binId}" text="{text}" />
+				</Select>
+				<MessageStrip
+					visible="{= !${/resolve/hasAlternatives} }"
+					text="{i18n>noAlternatives}"
+					type="Information"
+					showIcon="true"
+					class="sapUiSmallMarginTop" />
+			</VBox>
+		</content>
+		<beginButton>
+			<Button
+				id="resolveConfirm"
+				text="{i18n>resolve}"
+				type="Emphasized"
+				press=".onResolve" />
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>cancel}"
+				press=".onCancel" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

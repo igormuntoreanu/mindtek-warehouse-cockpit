@@ -1,0 +1,74 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mc="sap.suite.ui.microchart">
+	<Page
+		id="workerPage"
+		title="{/worker/title}"
+		titleLevel="H2"
+		showNavButton="true"
+		navButtonPress=".onPanelBack"
+		navButtonTooltip="{i18n>back}">
+		<headerContent>
+			<Button
+				icon="sap-icon://decline"
+				tooltip="{i18n>closePanel}"
+				press=".onClosePanel"
+				type="Transparent" />
+		</headerContent>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<HBox justifyContent="SpaceBetween" alignItems="Center">
+					<Label text="{/worker/roleText}" />
+					<ObjectStatus id="workerStatus" text="{/worker/statusText}" state="{/worker/statusState}" inverted="true" />
+				</HBox>
+				<HBox alignItems="Center" class="sapUiSmallMarginTop">
+					<mc:RadialMicroChart
+						id="workerProductivity"
+						percentage="{/worker/productivityPercent}"
+						valueColor="{/worker/productivityColor}"
+						size="S"
+						ariaLabelledBy="workerProductivityLabel workerProductivityValue" />
+					<VBox class="sapUiSmallMarginBegin">
+						<Label id="workerProductivityLabel" text="{i18n>productivity}" />
+						<Title id="workerProductivityValue" text="{/worker/productivityText}" level="H3" />
+						<Label text="{/worker/targetText}" />
+					</VBox>
+				</HBox>
+			</VBox>
+			<form:SimpleForm
+				editable="false"
+				layout="ColumnLayout"
+				columnsM="1"
+				columnsL="1"
+				columnsXL="1">
+				<form:toolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>currentWork}" level="H3" />
+					</Toolbar>
+				</form:toolbar>
+				<Label text="{i18n>currentTask}" />
+				<Text text="{/worker/taskText}" />
+				<Label text="{i18n>wave}" visible="{= !!${/worker/waveId} }" />
+				<Link text="{/worker/waveId}" visible="{= !!${/worker/waveId} }" press=".onWorkerWavePress" />
+				<Label text="{/worker/doneLabel}" />
+				<Text text="{/worker/doneText}" />
+				<Label text="{i18n>carrying}" visible="{= !!${/worker/picker} }" />
+				<Text text="{/worker/carryingText}" visible="{= !!${/worker/picker} }" />
+			</form:SimpleForm>
+			<List
+				id="workerQueue"
+				visible="{= !!${/worker/picker} }"
+				items="{path: '/worker/queue', templateShareable: false}"
+				noDataText="{i18n>queueEmpty}">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{/worker/queueTitle}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<StandardListItem title="{title}" description="{description}" info="{qtyText}" />
+			</List>
+		</content>
+	</Page>
+</core:FragmentDefinition>

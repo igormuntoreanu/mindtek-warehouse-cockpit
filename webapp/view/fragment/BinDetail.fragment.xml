@@ -1,0 +1,127 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mc="sap.suite.ui.microchart">
+	<Page
+		id="binPage"
+		title="{/bin/title}"
+		titleLevel="H2"
+		showNavButton="true"
+		navButtonPress=".onPanelBack"
+		navButtonTooltip="{i18n>back}"
+		showFooter="{= !!${/bin/hasException} }">
+		<headerContent>
+			<Button
+				icon="sap-icon://decline"
+				tooltip="{i18n>closePanel}"
+				press=".onClosePanel"
+				type="Transparent" />
+		</headerContent>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<Title text="{/bin/productName}" level="H3" wrapping="true" />
+				<HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop">
+					<Label text="{/bin/productId}" />
+					<ObjectStatus id="binStatus" text="{/bin/stateText}" state="{/bin/stateState}" inverted="true" />
+				</HBox>
+				<MessageStrip
+					id="binExceptionStrip"
+					visible="{= !!${/bin/hasException} }"
+					text="{/bin/exceptionText}"
+					type="Error"
+					showIcon="true"
+					class="sapUiSmallMarginTop" />
+				<Label text="{i18n>fillLevel}" labelFor="binFill" class="sapUiSmallMarginTop" />
+				<ProgressIndicator
+					id="binFill"
+					percentValue="{/bin/fill}"
+					displayValue="{/bin/fillText}"
+					state="{/bin/fillState}"
+					displayOnly="true" />
+			</VBox>
+			<form:SimpleForm
+				editable="false"
+				layout="ColumnLayout"
+				columnsM="1"
+				columnsL="1"
+				columnsXL="1">
+				<form:toolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>stock}" level="H3" />
+					</Toolbar>
+				</form:toolbar>
+				<Label text="{i18n>location}" />
+				<Text text="{/bin/locationText}" />
+				<Label text="{i18n>quantity}" />
+				<Text text="{/bin/quantityText}" />
+				<Label text="{i18n>reserved}" />
+				<Text text="{/bin/reservedText}" />
+				<Label text="{i18n>available}" />
+				<Text text="{/bin/availableText}" />
+				<Label text="{i18n>capacity}" />
+				<Text text="{/bin/capacityText}" />
+				<Label text="{i18n>lastMovement}" />
+				<Text text="{/bin/lastMovementText}" />
+				<Label text="{i18n>picks30Days}" />
+				<Text text="{/bin/pickCount}" />
+				<Label text="{i18n>otherBins}" />
+				<Text text="{/bin/otherBinsText}" />
+			</form:SimpleForm>
+			<VBox class="sapUiSmallMargin">
+				<Title id="binHistoryTitle" text="{i18n>stockHistory}" level="H3" />
+				<core:InvisibleText id="binHistoryText" text="{/bin/historyAria}" />
+				<mc:LineMicroChart
+					id="binHistory"
+					size="Responsive"
+					height="6rem"
+					width="100%"
+					minYValue="0"
+					leftTopLabel="{/bin/historyFirst}"
+					rightTopLabel="{/bin/historyLast}"
+					leftBottomLabel="{/bin/historyStart}"
+					rightBottomLabel="{/bin/historyEnd}"
+					showThresholdLine="false"
+					showThresholdValue="false"
+					ariaLabelledBy="binHistoryTitle binHistoryText"
+					class="sapUiTinyMarginTop">
+					<mc:lines>
+						<mc:LineMicroChartLine
+							points="{path: '/bin/history', templateShareable: false}"
+							color="Neutral"
+							showPoints="true">
+							<mc:points>
+								<mc:LineMicroChartPoint x="{x}" y="{y}" />
+							</mc:points>
+						</mc:LineMicroChartLine>
+					</mc:lines>
+				</mc:LineMicroChart>
+			</VBox>
+			<List
+				id="binMovements"
+				items="{path: '/bin/movements', templateShareable: false}"
+				noDataText="{i18n>noMovements}">
+				<headerToolbar>
+					<Toolbar style="Clear">
+						<Title text="{i18n>recentMovements}" level="H3" />
+					</Toolbar>
+				</headerToolbar>
+				<StandardListItem
+					title="{title}"
+					description="{time}"
+					info="{qtyText}"
+					infoState="{state}" />
+			</List>
+		</content>
+		<footer>
+			<OverflowToolbar>
+				<ToolbarSpacer />
+				<Button
+					id="resolveFromBin"
+					text="{i18n>resolveEllipsis}"
+					type="Emphasized"
+					press=".onResolveFromBin" />
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</core:FragmentDefinition>
